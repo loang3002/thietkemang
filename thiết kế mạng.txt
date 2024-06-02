@@ -1,0 +1,91 @@
+*Có ba kiểu định tuyến giữa các VLAN khác nhau:
+
+1. **VLAN interface routing (Router-on-a-Stick):** Trong phương pháp này, một router hoặc layer 3 switch được cấu hình với các interface ảo hoặc subinterfaces để kết nối với các VLAN khác nhau. Mỗi VLAN sẽ được gán một interface ảo và quá trình định tuyến giữa các VLAN được thực hiện thông qua router. Router xử lý việc chuyển hướng các gói tin giữa các VLAN bằng việc sử dụng các table định tuyến. 
+
+2. **Inter-VLAN routing using Layer 3 Switch:** Trong trường hợp này, một Layer 3 switch được sử dụng để chuyển hướng gói tin giữa các VLAN bằng cách sử dụng các interface VLAN và routing protocols như RIP, OSPF hoặc EIGRP. Switch sẽ xử lý việc định tuyến giữa các VLAN một cách trực tiếp và nhanh chóng bằng cách sử dụng hardware switching.
+
+3. **VLAN routing with a Router and Switch:** Đây là một phương pháp kết hợp giữa Router và Switch, trong đó Switch được sử dụng để tạo VLANs và ánh xạ các VLAN vào các cổng, trong khi Router được sử dụng để chuyển hướng gói tin giữa các VLAN bằng cách sử dụng subinterfaces cho mỗi VLAN.
+
+* VLAN (Virtual Local Area Network) là một phương pháp phân chia mạng vật lý thành nhiều mạng ảo, cho phép tạo ra các mạng độc lập và cách riêng biệt trên cùng một cơ sở hạ tầng vật lý. VLAN giúp cải thiện hiệu suất mạng, bảo mật thông tin và quản lý mạng dễ dàng hơn.
+
+* Native VLAN là VLAN mặc định được sử dụng để truyền thông tin không được gắn thẻ VLAN trên một trunk link giữa các thiết bị mạng, như router hoặc switch. Các dữ liệu không được gắn thẻ sẽ được truyền trên Native VLAN mà không cần thêm thông tin gắn thẻ. Điều này giúp trong việc truyền thông tin giữa các thiết bị từ các VLAN khác nhau.
+
+* Đường trunk trong mạng là một loại kết nối được sử dụng để truyền thông đi giữa các thiết bị mạng, như switch hoặc router, và cho phép truyền dữ liệu từ nhiều VLAN khác nhau trên cùng một kết nối vật lý. Đường trunk thường được thiết lập để truyền thông tin gắn thẻ VLAN giữa các thiết bị mạng để giữ cho thông tin từ các VLAN riêng biệt được phân biệt và truyền đi một cách đúng đắn. Đường trunk cũng hỗ trợ việc truyền dữ liệu giữa các thiết bị mạng ở khoảng cách xa và truyền dữ liệu tốc độ cao giữa các thiết bị.
+
+* Để cấu hình một đường trunk trên một switch:
+
+1. Chuyển cổng mạng sang chế độ trunk:
+```
+interface GigabitEthernet0/1
+switchport mode trunk
+```
+2. Thêm VLANs vào trunk:
+```
+interface GigabitEthernet0/1
+switchport trunk allowed vlan add 10,20
+```
+3. Lưu cấu hình:
+```
+wr mem
+``` 
+
+vlan 101
+name KeToan
+vlan 102
+name NhanSu
+vlan 103
+name Dev
+name Wifi
+vlan 999
+name Management
+
+cấu hình VTP
+vtp domain ITDLU
+vtp password mangmaytinh
+vtp mode server
+
+cấu hình trunk 
+int gi 
+switchport mode trunk
+
+cấu hình route port
+int gi1/1/1
+no switchport 
+ip add
+
+
+cấu hình EIGRP
+router eigrp ...
+network
+
+cấu hình các port
+int range fastEthernet 0/1-24
+spanning-tree portfast 
+int range fa0/1-10
+switchport mode access 
+switchport access vlan 101
+
+cấu hình DHCP
+ip dhcp excluded-address 10.0.102.0 10.0.102.1
+ip dhcp pool NhanSu
+network 10.0.102.0 255.255.255.0
+default-router 10.0.102.1 
+dns-server 10.0.10.10
+
+Cấu hình địa chỉ IP cho các máy PC và các switch
+bật dhcp lên
+
+cấu hình telnet 
+hostname DS1
+line vty 0 15
+password ctk44mmt
+login
+exit
+enable password ctk44mmt
+end
+DS1#write memory
+
+cấu hình hostname DS1, DS2, SW-A1, SW-A2, SW-A3, SW-A4
+hostname
+ Cấu hình STP cho các switch DS1, DS2, SW-A1, SW-A2, SW-A3, SW-A4
+spanning-tree vlan 101 root primary
